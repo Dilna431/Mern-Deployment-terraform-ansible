@@ -1,0 +1,21 @@
+- hosts: db
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install MongoDB
+      apt:
+        name: mongodb
+        state: present
+
+    - name: Enable and start MongoDB
+      service:
+        name: mongodb
+        state: started
+        enabled: true
+
+    - name: Create MongoDB user (optional, for security)
+      shell: |
+        mongo --eval 'db.getSiblingDB("mernapp").createUser({user: "mern", pwd: "mernpass", roles:[{role:"readWrite",db:"mernapp"}]})'

@@ -1,0 +1,43 @@
+- hosts: web
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Node.js and npm
+      apt:
+        name:
+          - nodejs
+          - npm
+        state: present
+
+    - name: Install git
+      apt:
+        name: git
+        state: present
+
+    - name: Clone MERN application
+      git:
+        repo: https://github.com/UnpredictablePrashant/TravelMemory.git
+        dest: /home/ubuntu/TravelMemory
+
+    - name: Install backend dependencies
+      npm:
+        path: /home/ubuntu/TravelMemory/backend
+
+    - name: Install frontend dependencies
+      npm:
+        path: /home/ubuntu/TravelMemory/frontend
+
+    - name: Start backend
+      shell: |
+        cd /home/ubuntu/TravelMemory/backend
+        npm install
+        nohup npm start &
+
+    - name: Start frontend
+      shell: |
+        cd /home/ubuntu/TravelMemory/frontend
+        npm install
+        nohup npm start &
