@@ -103,18 +103,18 @@ ansible-playbook -i inventory.ini deploy.yml
         ├── webserver/  
         └── dbserver/  
 
-## How It Works  
+## How It Works    
 
-Terraform provisions all AWS infrastructure, including networking, EC2 instances, security groups, and IAM roles.
-The web server is exposed publicly to serve the React frontend and Node.js backend.
-The database server is isolated in a private subnet and secured.
-Ansible connects to the EC2 instances over SSH and automates:
-Installation of required software
-Application code deployment and startup
-Database configuration and user management
-Security hardening steps
+Terraform provisions all AWS infrastructure, including networking, EC2 instances, security groups, and IAM roles. 
+The web server is exposed publicly to serve the React frontend and Node.js backend.  
+The database server is isolated in a private subnet and secured.  
+Ansible connects to the EC2 instances over SSH and automates:  
+Installation of required software  
+Application code deployment and startup    
+Database configuration and user management  
+Security hardening steps  
 
-The React frontend communicates with the Node.js Express backend, which interacts with the MongoDB database.
+The React frontend communicates with the Node.js Express backend, which interacts with the MongoDB database.  
  
 
 
