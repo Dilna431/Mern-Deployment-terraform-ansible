@@ -90,6 +90,39 @@ Install and configure MongoDB on the database server
 Secure MongoDB by creating users and enabling authentication  
 Set environment variables for the app  
 Harden security by configuring firewalls and disabling root SSH login  
+3. Run the playbook  
+ansible-playbook -i inventory.ini deploy.yml  
+
+## Project Structure  
+├── terraform/  
+│   ├── main.tf  
+│   ├── variables.tf  
+│   ├── outputs.tf  
+│   └── ...  
+├── ansible/  
+│   ├── inventory.ini  
+│   ├── deploy.yml  
+│   ├── roles/  
+        ├── webserver/  
+        └── dbserver/  
+
+## How It Works  
+
+Terraform provisions all AWS infrastructure, including networking, EC2 instances, security groups, and IAM roles.
+The web server is exposed publicly to serve the React frontend and Node.js backend.
+The database server is isolated in a private subnet and secured.
+Ansible connects to the EC2 instances over SSH and automates:
+Installation of required software
+Application code deployment and startup
+Database configuration and user management
+Security hardening steps
+
+The React frontend communicates with the Node.js Express backend, which interacts with the MongoDB database.
+ 
+
+
+
+
    
    
 
