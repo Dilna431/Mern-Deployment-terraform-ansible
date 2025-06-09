@@ -20,10 +20,7 @@ The TravelMemory app is a MERN (MongoDB, Express.js, React.js, Node.js) based tr
   - [Part 2: Configuration and Deployment with Ansible](#part-2-configuration-and-deployment-with-ansible)  
 - [Project Structure](#project-structure)  
 - [How It Works](#how-it-works)  
-- [Security Considerations](#security-considerations)  
-- [Troubleshooting](#troubleshooting)  
-- [Contributing](#contributing)  
-- [License](#license)
+
 
 ---
 
