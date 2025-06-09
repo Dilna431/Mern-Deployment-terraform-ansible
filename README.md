@@ -65,4 +65,31 @@ The deployment consists of:
 2. **Initialize Terraform**:
 
    ```bash
-   terraform init
+   terraform init 
+   terraform plan 
+   terraform apply  
+
+This will provision:  
+VPC with public and private subnets   
+Internet Gateway and NAT Gateway   
+Route tables   
+EC2 instances for web and database servers   
+Security groups and IAM roles  
+
+3. **Note the output:**
+   The public IP of the web server EC2 instance is displayed after deployment.   
+
+### Part 2: Configuration and Deployment with Ansible   
+
+1.Configure your Ansible inventory to include EC2 instance IPs.   
+2. Run the Ansible playbooks to:  
+Install Node.js, NPM on the web server 
+Clone the TravelMemory repository 
+Install dependencies and start the backend and frontend 
+Install and configure MongoDB on the database server  
+Secure MongoDB by creating users and enabling authentication  
+Set environment variables for the app  
+Harden security by configuring firewalls and disabling root SSH login  
+   
+   
+
