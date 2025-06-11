@@ -1,13 +1,13 @@
-# TravelMemory MERN Stack Deployment on AWS using Terraform and Ansible
+# TravelMemory MERN Stack Deployment on AWS using Terraform and Ansible  
 
-## Overview
+## Overview  
 
-This repository contains all the necessary infrastructure as code (IaC) and configuration management scripts to deploy the **TravelMemory** MERN stack application on AWS. The deployment uses:
+This repository contains all the necessary infrastructure as code (IaC) and configuration management scripts to deploy the **TravelMemory** MERN stack application on AWS. The deployment uses:  
 
-- **Terraform** for AWS infrastructure provisioning
-- **Ansible** for server configuration and application deployment
+- **Terraform** for AWS infrastructure provisioning  
+- **Ansible** for server configuration and application deployment  
 
-The TravelMemory app is a MERN (MongoDB, Express.js, React.js, Node.js) based travel journal application sourced from [TravelMemory GitHub Repo](https://github.com/UnpredictablePrashant/TravelMemory).
+The TravelMemory app is a MERN (MongoDB, Express.js, React.js, Node.js) based travel journal application sourced from [TravelMemory GitHub Repo](https://github.com/UnpredictablePrashant/TravelMemory).  
 
 ---
 ## Architecture
@@ -78,67 +78,116 @@ terraform init
 terraform plan -var-file="modules/tfvar/dev.tfvars"  
 terraform apply -var-file="modules/tfvar/dev.tfvars" 
 ```
+### 3. Ansible Configuration  
+
+Edit Inventory File  
+File: ansible/inventory/aws_ec2.ini  
+
+```ini
+[web]
+web_server ansible_host=<web_server_public_ip>
+
+[db]
+db_server ansible_host=<database_private_ip>
+
+[all:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=~/.ssh/your-key-pair-name.pem
+
+```
+
+**Set MongoDB Password** 
+```bash
+export MONGODB_PASSWORD=your_secure_password
+```
+Update env.j2 Template  
+File: ansible/templates/env.j2  
+
+```env
+PORT=3001
+MONGO_URI=mongodb://mernuser:${MONGODB_PASSWORD}@localhost:27017/merndb
+
+```
+
+**Run Ansible Playbooks**  
+
+```bash
+cd ansible
+ansible-playbook security.yml
+ansible-playbook dbserver.yml
+ansible-playbook webserver.yml
+```
+
+
+### 4. Application Configuration  
+
+Frontend .env  
+
+```env 
+REACT_APP_BACKEND_URL=http://<web_server_public_ip>:3001
+```
+
+Backend .env 
+```env 
+PORT=3001  
+MONGO_URI=mongodb://mernuser:<password>@<database_private_ip>:27017/merndb
+```
+
+
+### Deployment Verification   
+
+Frontend: http://<web_server_public_ip>  
+
+Backend API Test: http://<web_server_public_ip>:3001/api/hello  
+
+### Security Considerations  
+
+MongoDB is accessible only from the web server.  
+SSH access is restricted to your IP address.  
+Instances are secured via security.yml playbook.  
+Web server in a public subnet; DB server in a private subnet.  
+Security groups enforce least privilege.   
+
+### Clean Up  
+
+Destroy infrastructure using:  
+
+```bash
+cd "Terraform Deployment"
+terraform destroy -var-file="modules/tfvar/dev.tfvars"
+```
+
+### Troubleshooting 
+
+**SSH Access**  
+
+```bash
+ssh -i ~/.ssh/your-key-pair-name.pem ubuntu@<web_server_public_ip>
+ssh -J ubuntu@<web_server_public_ip> ubuntu@<database_private_ip>
+```
+
+**MongoDB Access** 
+
+```bash
+mongo mongodb://mernuser:password@<database_private_ip>:27017/merndb
+```
+
+**Logs**   
+
+PM2 Logs   
+pm2 logs backend   
+
+NGINX Logs   
+sudo tail -f /var/log/nginx/error.log   
 
 
 
 
-2. **Initialize Terraform**:
 
-   ```bash
-   terraform init 
-   terraform plan 
-   terraform apply  
 
-This will provision:  
-VPC with public and private subnets   
-Internet Gateway and NAT Gateway   
-Route tables   
-EC2 instances for web and database servers   
-Security groups and IAM roles  
 
-3. **Note the output:**
-   The public IP of the web server EC2 instance is displayed after deployment.   
 
-### Part 2: Configuration and Deployment with Ansible   
 
-1.Configure your Ansible inventory to include EC2 instance IPs.   
-2. Run the Ansible playbooks to:  
-Install Node.js, NPM on the web server 
-Clone the TravelMemory repository 
-Install dependencies and start the backend and frontend 
-Install and configure MongoDB on the database server  
-Secure MongoDB by creating users and enabling authentication  
-Set environment variables for the app  
-Harden security by configuring firewalls and disabling root SSH login  
-3. Run the playbook  
-ansible-playbook -i inventory.ini deploy.yml  
-
-## Project Structure  
-├── terraform/  
-│   ├── main.tf  
-│   ├── variables.tf  
-│   ├── outputs.tf  
-│   └── ...  
-├── ansible/  
-│   ├── inventory.ini  
-│   ├── deploy.yml  
-│   ├── roles/  
-        ├── webserver/  
-        └── dbserver/  
-
-## How It Works    
-
-Terraform provisions all AWS infrastructure, including networking, EC2 instances, security groups, and IAM roles. 
-The web server is exposed publicly to serve the React frontend and Node.js backend.  
-The database server is isolated in a private subnet and secured.  
-Ansible connects to the EC2 instances over SSH and automates:  
-Installation of required software  
-Application code deployment and startup    
-Database configuration and user management  
-Security hardening steps  
-
-The React frontend communicates with the Node.js Express backend, which interacts with the MongoDB database.  
- 
 
 
 
