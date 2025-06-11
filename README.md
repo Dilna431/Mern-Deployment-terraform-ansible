@@ -10,20 +10,6 @@ This repository contains all the necessary infrastructure as code (IaC) and conf
 The TravelMemory app is a MERN (MongoDB, Express.js, React.js, Node.js) based travel journal application sourced from [TravelMemory GitHub Repo](https://github.com/UnpredictablePrashant/TravelMemory).
 
 ---
-
-## Table of Contents
-
-- [Architecture](#architecture)  
-- [Prerequisites](#prerequisites)  
-- [Setup and Deployment](#setup-and-deployment)  
-  - [Part 1: Infrastructure Setup with Terraform](#part-1-infrastructure-setup-with-terraform)  
-  - [Part 2: Configuration and Deployment with Ansible](#part-2-configuration-and-deployment-with-ansible)  
-- [Project Structure](#project-structure)  
-- [How It Works](#how-it-works)  
-
-
----
-
 ## Architecture
 
 The deployment consists of:
@@ -53,11 +39,48 @@ The deployment consists of:
 
 ---
 
-## Setup and Deployment
+## Configuration Steps  
 
-### Part 1: Infrastructure Setup with Terraform
+### 1. AWS Configuration  
 
-1. **Configure AWS CLI** with your credentials.
+#### Configure AWS CLI 
+```bash  
+aws configure
+
+```
+#### Import SSH Key Pair  
+
+aws ec2 import-key-pair --key-name "your-key-pair-name" --public-key-material fileb://~/.ssh/id_rsa.pub  
+
+### 2. Terraform Configuration  
+Update dev.tfvars  
+File: Terraform Deployment/modules/tfvar/dev.tfvars  
+
+```bash
+VPC Configuration 
+vpc_cidr            = "10.0.0.0/16" 
+public_subnet_cidr  = "10.0.1.0/24" 
+private_subnet_cidr = "10.0.2.0/24" 
+availability_zone   = "us-west-1a" 
+environment         = "development" 
+
+EC2 Configuration
+ami_id   = "ami-0f8e81a3da6e2510a" # Ubuntu 20.04 LTS in us-west-1  
+key_name = "your-key-pair-name"  
+my_ip    = "YOUR_IP_ADDRESS"
+
+```
+**Initialize, Plan, and Apply**
+
+```bash
+cd "Terraform Deployment" 
+terraform init 
+terraform plan -var-file="modules/tfvar/dev.tfvars"  
+terraform apply -var-file="modules/tfvar/dev.tfvars" 
+```
+
+
+
 
 2. **Initialize Terraform**:
 
